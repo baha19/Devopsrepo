@@ -1,32 +1,30 @@
-# Étape 1: Utiliser une image de base Java (OpenJDK)
-FROM openjdk:17-jdk-slim as builder
+# Étape 1: Utiliser une image officielle de Maven avec OpenJDK 17 pour construire l'application
+FROM maven:3.8.6-openjdk-17 AS builder
 
-# Étape 2: Définir le répertoire de travail
+# Définir le répertoire de travail
 WORKDIR /app
 
-# Étape 3: Copier le fichier pom.xml (ou build.gradle si vous utilisez Gradle)
+# Copier le fichier pom.xml et télécharger les dépendances Maven
 COPY pom.xml .
-
-# Étape 4: Télécharger les dépendances Maven (cela permet de profiter du cache de Docker pour accélérer les builds)
 RUN mvn dependency:go-offline
 
-# Étape 5: Copier le code source de l'application
+# Copier le reste du code source
 COPY src /app/src
 
-# Étape 6: Compiler l'application et générer le fichier JAR dans le dossier target
+# Compiler l'application et générer le fichier JAR sans exécuter les tests
 RUN mvn clean package -DskipTests
 
-# Étape 7: Créer l'image finale pour exécuter l'application
+# Étape 2: Utiliser une image OpenJDK légère pour exécuter l'application
 FROM openjdk:17-jdk-slim
 
-# Étape 8: Définir le répertoire de travail dans le conteneur
+# Définir le répertoire de travail dans le conteneur
 WORKDIR /app
 
-# Étape 9: Copier le fichier JAR généré depuis l'étape précédente
+# Copier le fichier JAR généré depuis l'étape de construction
 COPY --from=builder /app/target/*.jar /app/app.jar
 
-# Étape 10: Exposer le port de l'application Spring Boot
+# Exposer le port de l'application Spring Boot
 EXPOSE 8080
 
-# Étape 11: Commande pour démarrer l'application
+# Commande pour démarrer l'application
 CMD ["java", "-jar", "/app/app.jar"]
