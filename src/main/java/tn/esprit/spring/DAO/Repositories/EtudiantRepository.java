@@ -20,4 +20,5 @@ public interface EtudiantRepository extends JpaRepository<Etudiant,Long> {
             "           join t_reservation r on r.id_reservation= re.reservations_id_reservation" +
             "           where r.est_valide=?1 ", nativeQuery = true)
     List<Etudiant> e5erMethodeSQL(boolean estValide);
+    List<Etudiant> findByEcole(String ecole);
 }
