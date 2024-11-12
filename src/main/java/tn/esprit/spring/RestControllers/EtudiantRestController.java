@@ -8,6 +8,7 @@ import tn.esprit.spring.Services.Chambre.IChambreService;
 import tn.esprit.spring.Services.Etudiant.IEtudiantService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("etudiant")
@@ -38,5 +39,9 @@ public class EtudiantRestController {
     @DeleteMapping("deleteById")
     void deleteById(@RequestParam long id) {
         service.deleteById(id);
+    }
+    @GetMapping("/repartition-ecoles")
+    public Map<String, Long> getRepartitionParEcole() {
+        return service.repartitionEtudiantsParEcole();
     }
 }
