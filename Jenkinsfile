@@ -23,6 +23,15 @@ pipeline {
             }
         }
 
+        stage('Test') {
+            steps {
+                // Exécution des tests
+                script {
+                    sh 'mvn test'
+                }
+            }
+        }
+
         stage('Build') {
             steps {
                 // Construction du livrable sans les tests
