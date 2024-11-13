@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKERHUB_USERNAME = "" 
+       NEXUS_CREDENTIALS = credentials('nexus')
     }
 
     stages {
@@ -38,7 +38,7 @@ pipeline {
                 }
             }
         }
-stage('Upload to Nexus') {
+/*stage('Upload to Nexus') {
     steps {
         script {
             echo "Deploying to Nexus..."
@@ -66,24 +66,15 @@ stage('Upload to Nexus') {
             echo "Deployment to Nexus completed!"
         }
     }
-}
-        /*stage('Deploy to Nexus') {
-    steps {
-        script {
-            withCredentials([usernamePassword(credentialsId: 'nexus', usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
-                // Use environment variables to avoid exposing secrets in logs
-                sh """
-                    mvn deploy \
-                    -DskipTests \
-                    -Dnexus.username=\${NEXUS_USERNAME} \
-                    -Dnexus.password=\${NEXUS_PASSWORD} \
-                    -DrepositoryId=back_repo \
-                    -Durl=http://10.0.2.15:8081/repository/back_repo
-                """
+}*/
+       stage("Deploy to Nexus") {
+            steps {
+                script {
+                    // Use the credentials stored in 'NEXUS_CREDENTIALS' for deployment
+                    sh "mvn deploy -DskipTests -Dnexus.username=${NEXUS_CREDENTIALS_USR} -Dnexus.password=${NEXUS_CREDENTIALS_PSW}"
+                }
             }
         }
-    }
-}*/
 
 
         stage('Docker Image') {
