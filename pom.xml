@@ -65,25 +65,19 @@
     </build>
          <servers>
     <!-- Deploy to Nexus -->
-    <server>
-        <id>deploymentRepo</id> <!-- This must match the 'id' in your POM.xml distributionManagement section -->
-        <username>admin</username>
-        <password>admin</password>
-    </server>
-    <!-- You can add more repositories here if needed -->
-</servers>
+ 
  
         <!-- Deploy to Nexus -->
          <distributionManagement>
              <repository>
                  <id>deploymentRepo</id>
                  <name>Nexus Repository</name>
-                 <url>http://localhost:8081/repository/maven-releases/</url> <!-- For release versions -->
+                 <url>http://10.0.2.15:8081/repository/maven-releases/</url> <!-- For release versions -->
              </repository>
              <snapshotRepository>
                  <id>deploymentRepo</id>
                  <name>Nexus Repository</name>
-                 <url>http://localhost:8081/repository/maven-snapshots/</url> <!-- For snapshot versions -->
+                 <url>http://10.0.2.15:8081/repository/maven-snapshots/</url> <!-- For snapshot versions -->
              </snapshotRepository>
          </distributionManagement>
 
