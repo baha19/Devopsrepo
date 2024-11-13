@@ -63,6 +63,15 @@
             </plugin>
         </plugins>
     </build>
+         <servers>
+    <!-- Deploy to Nexus -->
+    <server>
+        <id>deploymentRepo</id> <!-- This must match the 'id' in your POM.xml distributionManagement section -->
+        <username>admin</username>
+        <password>admin</password>
+    </server>
+    <!-- You can add more repositories here if needed -->
+</servers>
  
         <!-- Deploy to Nexus -->
          <distributionManagement>
