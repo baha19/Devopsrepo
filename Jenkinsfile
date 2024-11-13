@@ -71,12 +71,12 @@ pipeline {
     steps {
         script {
             withCredentials([usernamePassword(credentialsId: 'nexus', usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
-                // Deploying to Nexus using Maven with credentials
+                // Use environment variables to avoid exposing secrets in logs
                 sh """
                     mvn deploy \
                     -DskipTests \
-                    -Dnexus.username=${NEXUS_USERNAME} \
-                    -Dnexus.password=${NEXUS_PASSWORD} \
+                    -Dnexus.username=\${NEXUS_USERNAME} \
+                    -Dnexus.password=\${NEXUS_PASSWORD} \
                     -DrepositoryId=back_repo \
                     -Durl=http://10.0.2.15:8081/repository/back_repo
                 """
@@ -84,6 +84,7 @@ pipeline {
         }
     }
 }
+
 
         stage('Docker Image') {
             steps {
