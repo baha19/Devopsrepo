@@ -38,7 +38,7 @@ pipeline {
                 }
             }
         }
-/* stage('Upload to Nexus') {
+stage('Upload to Nexus') {
     steps {
         script {
             echo "Deploying to Nexus..."
@@ -53,21 +53,21 @@ pipeline {
                 groupId: 'tn.esprit.spring',
                 artifactId: 'Foyer', // Ensure this matches the artifactId in your POM
                 version: '0.0.1-SNAPSHOT', // Match with version in your POM
-                artifacts: [
-                    [
-                        artifactId: 'Foyer',
-                        classifier: '',
-                        file: 'target/Foyer-0.0.1-SNAPSHOT.jar',  // Ensure the correct path to your artifact
-                        type: 'jar'
-                    ]
-                ]
+            //    artifacts: [
+             //       [
+             //           artifactId: 'Foyer',
+              ///          classifier: '',
+              //          file: 'target/Foyer-0.0.1-SNAPSHOT.jar',  // Ensure the correct path to your artifact
+             // //          type: 'jar'
+             //       ]
+           //     ]
             )
 
             echo "Deployment to Nexus completed!"
         }
     }
-}*/
-        stage('Deploy to Nexus') {
+}
+        /*stage('Deploy to Nexus') {
     steps {
         script {
             withCredentials([usernamePassword(credentialsId: 'nexus', usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
@@ -83,7 +83,7 @@ pipeline {
             }
         }
     }
-}
+}*/
 
 
         stage('Docker Image') {
