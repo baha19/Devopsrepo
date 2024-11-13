@@ -39,31 +39,34 @@ pipeline {
             }
         }
  stage('Upload to Nexus') {
-            steps {
-                script {
-                    echo "Deploying to Nexus..."
-                    nexusArtifactUploader(
-                        nexusVersion: 'nexus3',
-                        protocol: 'http',
-                        nexusUrl: '10.0.2.15:8081',
-                        repository: 'back_repo',
-                        credentialsId: 'nexus',
-                        groupId: 'tn.esprit.spring',
-                        version: '1.0.0',
-                        artifacts: [
-                            [
-                                artifactId: 'Foyer',
-                                classifier: '',
-                                file: 'target/0.0.1-SNAPSHOT.jar',
-                                type: 'jar'
-                            ]
-                        ]
-                    )
-                    echo "Deployment to Nexus completed!"
-                }
-            }
+    steps {
+        script {
+            echo "Deploying to Nexus..."
+
+            // Ensure the version and artifactId match with your POM file
+            nexusArtifactUploader(
+                nexusVersion: 'nexus3',
+                protocol: 'http',
+                nexusUrl: 'http://10.0.2.15:8081',
+                repository: 'back_repo',  // Change this to your actual repository name in Nexus
+                credentialsId: 'nexus',
+                groupId: 'tn.esprit.spring',
+                artifactId: 'Foyer', // Ensure this matches the artifactId in your POM
+                version: '0.0.1-SNAPSHOT', // Match with version in your POM
+                artifacts: [
+                    [
+                        artifactId: 'Foyer',
+                        classifier: '',
+                        file: 'target/Foyer-0.0.1-SNAPSHOT.jar',  // Ensure the correct path to your artifact
+                        type: 'jar'
+                    ]
+                ]
+            )
+
+            echo "Deployment to Nexus completed!"
         }
-         
+    }
+}
 
         stage('Docker Image') {
             steps {
