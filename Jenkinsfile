@@ -53,28 +53,28 @@ pipeline {
                 groupId: 'tn.esprit.spring',
                 artifactId: 'Foyer', // Ensure this matches the artifactId in your POM
                 version: '0.0.1-SNAPSHOT', // Match with version in your POM
-            //    artifacts: [
-             //       [
-             //           artifactId: 'Foyer',
-              ///          classifier: '',
-              //          file: 'target/Foyer-0.0.1-SNAPSHOT.jar',  // Ensure the correct path to your artifact
-             // //          type: 'jar'
-             //       ]
-           //     ]
+               artifacts: [
+                   [
+                       artifactId: 'Foyer',
+                       classifier: '',
+                        file: 'target/Foyer-0.0.1-SNAPSHOT.jar',  // Ensure the correct path to your artifact
+                      type: 'jar'
+                   ]
+               ]
             )
 
             echo "Deployment to Nexus completed!"
         }
     }
 }*/
-       stage("Deploy to Nexus") {
+    /*   stage("Deploy to Nexus") {
             steps {
                 script {
                     // Use the credentials stored in 'NEXUS_CREDENTIALS' for deployment
                     sh "mvn deploy -DskipTests -Dnexus.username=${NEXUS_CREDENTIALS_USR} -Dnexus.password=${NEXUS_CREDENTIALS_PSW}"
                 }
             }
-        }
+        }*/
 
 
         stage('Docker Image') {
