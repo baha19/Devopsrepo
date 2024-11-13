@@ -38,7 +38,7 @@ pipeline {
                 }
             }
         }
-/*stage('Upload to Nexus') {
+stage('Upload to Nexus') {
     steps {
         script {
             echo "Deploying to Nexus..."
@@ -66,7 +66,7 @@ pipeline {
             echo "Deployment to Nexus completed!"
         }
     }
-}*/
+}
     /*   stage("Deploy to Nexus") {
             steps {
                 script {
@@ -80,7 +80,7 @@ pipeline {
         stage('Docker Image') {
             steps {
                 echo 'Building Docker image for Spring Boot...'
-                sh 'docker build -t /app:v1.0.0 -f Dockerfile .'
+                sh 'docker build -t wissem1717/springboot-app:v1.0.0 -f Dockerfile .'
             }
         }
 
@@ -99,7 +99,7 @@ pipeline {
                 echo 'Pushing Docker image to DockerHub...'
                 withCredentials([usernamePassword(credentialsId: 'docker', 
                   usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
-                    sh "docker push /-app:v1.0.0"
+                    sh "docker push wissem1717/springboot-app:v1.0.0"
                 }
             }
         }
