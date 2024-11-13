@@ -47,7 +47,7 @@ stage('Upload to Nexus') {
             nexusArtifactUploader(
                 nexusVersion: 'nexus3',
                 protocol: 'http',
-                nexusUrl: 'http://10.0.2.15:8081',
+                nexusUrl: '10.0.2.15:8081',
                 repository: 'back_repo',  // Change this to your actual repository name in Nexus
                 credentialsId: 'nexus',
                 groupId: 'tn.esprit.spring',
