@@ -69,8 +69,8 @@
  
         <distributionManagement>
     <repository>
-        <id>back_repo</id>
-        <url>http://10.0.2.15:8081/repository/back_repo/</url>
+        <id>back</id>
+        <url>http://10.0.2.15:8081/repository/back</url>
     </repository>
 </distributionManagement>
 
