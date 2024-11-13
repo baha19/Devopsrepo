@@ -1,51 +1,90 @@
 pipeline {
     agent any
-
     environment {
-        DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials-id') // Remplacez par l'ID de vos identifiants Docker Hub dans Jenkins
+        DOCKERHUB_USERNAME = "" 
     }
 
     stages {
+        stage('Get Started') {
+            steps {
+                echo "Start Building Pipeline"
+            }
+        }
+        stage('Clean') {
+            steps {
+                echo 'Cleaning previous builds and cache...'
+                sh 'mvn clean'
+            }
+        }
+
         stage('Build') {
             steps {
-                script {
-                    // Construire le projet avec Maven
-                    sh 'mvn clean package'
+                echo 'Building the Spring Boot application...'
+                sh 'mvn package'
+            }
+        }
+
+        stage('Static Analysis') {
+            environment {
+                scannerHome = tool 'sonarqubescanner'
+            }
+            steps {
+                withSonarQubeEnv(credentialsId: 'sonartoken', installationName: 'Sonarqube') {
+                    sh "${scannerHome}/bin/sonar-scanner \
+                        -Dsonar.projectKey=devopsproject \
+                        -Dsonar.java.binaries=target/classes \
+                        -Dsonar.sources=src/main/java \
+                        -Dsonar.host.url=http://10.0.2.15:9002/"
                 }
             }
         }
 
-        stage('Test') {
+          stage('Deploy to Nexus') {
             steps {
                 script {
-                    // Exécuter les tests unitaires
-                    sh 'mvn test'
+                    withCredentials([usernamePassword(credentialsId: 'nexus', usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
+                        sh "mvn deploy -DskipTests -Dnexus.username=${NEXUS_USERNAME} -Dnexus.password=${NEXUS_PASSWORD}"
+                    }
                 }
             }
         }
 
-        stage('Docker Build & Push') {
+        stage('Docker Image') {
             steps {
-                script {
-                    // Construire l'image Docker
-                    sh 'docker build -t your-dockerhub-username/foyer-app .'
-
-                    // Connexion à Docker Hub
-                    sh "echo $DOCKER_HUB_CREDENTIALS_PSW | docker login -u $DOCKER_HUB_CREDENTIALS_USR --password-stdin"
-
-                    // Pousser l'image vers Docker Hub
-                    sh 'docker push your-dockerhub-username/foyer-app'
-                }
+                echo 'Building Docker image for Spring Boot...'
+                sh 'docker build -t /app:v1.0.0 -f Dockerfile .'
             }
         }
 
-        stage('Deploy') {
+        stage('Docker Login') {
             steps {
-                script {
-                    // Lancer l'application et la base de données en utilisant Docker Compose
-                    sh 'docker-compose up -d'
+                echo 'Logging into DockerHub...'
+                withCredentials([usernamePassword(credentialsId: 'docker', 
+                  usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
+                    sh "docker login -u \$DOCKERHUB_USERNAME -p \$DOCKERHUB_PASSWORD"
                 }
             }
         }
-    }
-}
+
+        stage('Docker Push') {
+            steps {
+                echo 'Pushing Docker image to DockerHub...'
+                withCredentials([usernamePassword(credentialsId: 'docker', 
+                  usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
+                    sh "docker push /-app:v1.0.0"
+                }
+            }
+        }
+         stage('Docker Compose Up') {
+           steps {
+               echo 'Testing application using Docker Compose...'
+             // sh "docker-compose -f ./docker-compose.yml up -d"
+             //  sh "docker-compose up -d"
+              sh " docker-compose up -d --remove-orphans"
+
+           }
+       }
+
+        
+    } // Closing the stages block
+} // Closing the pipeline block
