@@ -52,7 +52,7 @@ pipeline {
                         version: '1.0.0',
                         artifacts: [
                             [
-                                artifactId: 'kaddem',
+                                artifactId: 'Foyer',
                                 classifier: '',
                                 file: 'target/0.0.1-SNAPSHOT.jar',
                                 type: 'jar'
