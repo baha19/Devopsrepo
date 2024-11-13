@@ -54,7 +54,7 @@ pipeline {
                             [
                                 artifactId: 'kaddem',
                                 classifier: '',
-                                file: 'target/Foyer 0.0.1-SNAPSHOT.jar',
+                                file: 'target/0.0.1-SNAPSHOT.jar',
                                 type: 'jar'
                             ]
                         ]
