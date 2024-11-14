@@ -18,7 +18,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                 git branch: 'yasmineaguili-5SIM2-G6', url: 'https://github.com/baha19/Devopsrepo.git'
+                git branch: 'yasmineaguili-5SIM2-G6', url: 'https://github.com/baha19/Devopsrepo.git'
             }
         }
 
@@ -58,12 +58,14 @@ pipeline {
 
         stage('Delete Existing Release from Nexus') {
             steps {
-                script {
-                    echo "Deleting existing release artifact from Nexus, if any..."
-                    sh """
-                        curl -v -X DELETE -u ${env.NEXUS_CREDENTIALS_ID_USR}:${env.NEXUS_CREDENTIALS_ID_PSW} \
-                        ${NEXUS_URL}/repository/maven-releases/${GROUP_ID.replace('.', '/')}/${ARTIFACT_ID}/${VERSION}
-                    """
+                withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
+                    script {
+                        echo "Deleting existing release artifact from Nexus, if any..."
+                        sh """
+                            curl -v -X DELETE -u ${NEXUS_USERNAME}:${NEXUS_PASSWORD} \
+                            ${NEXUS_URL}/repository/maven-releases/${GROUP_ID.replace('.', '/')}/${ARTIFACT_ID}/${VERSION}
+                        """
+                    }
                 }
             }
         }
