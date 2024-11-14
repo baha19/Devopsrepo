@@ -5,6 +5,10 @@ pipeline {
         MYSQL_DATABASE = 'foyer'
         DOCKER_HUB_REPO = 'yasmine064/aguiliyasmine_5sim2_g6_foyer'
         NEXUS_CREDENTIALS_ID = 'nexus-credentials'
+        NEXUS_URL = 'http://192.168.1.26:8081'
+        GROUP_ID = 'tn.esprit.spring'
+        ARTIFACT_ID = 'Foyer'
+        VERSION = '0.0.1'
     }
 
     triggers {
@@ -14,7 +18,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'yasmineaguili-5SIM2-G6', url: 'https://github.com/baha19/Devopsrepo.git'
+                 git branch: 'yasmineaguili-5SIM2-G6', url: 'https://github.com/baha19/Devopsrepo.git'
             }
         }
 
@@ -52,6 +56,18 @@ pipeline {
             }
         }
 
+        stage('Delete Existing Release from Nexus') {
+            steps {
+                script {
+                    echo "Deleting existing release artifact from Nexus, if any..."
+                    sh """
+                        curl -v -X DELETE -u ${env.NEXUS_CREDENTIALS_ID_USR}:${env.NEXUS_CREDENTIALS_ID_PSW} \
+                        ${NEXUS_URL}/repository/maven-releases/${GROUP_ID.replace('.', '/')}/${ARTIFACT_ID}/${VERSION}
+                    """
+                }
+            }
+        }
+
         stage('Deploy to Nexus') {
             steps {
                 script {
@@ -60,17 +76,17 @@ pipeline {
                     nexusArtifactUploader(
                         nexusVersion: 'nexus3',
                         protocol: 'http',
-                        nexusUrl: '192.168.1.26:8081',
+                        nexusUrl: "${NEXUS_URL}",
                         repository: 'maven-releases', 
                         credentialsId: 'nexus-credentials',
-                        groupId: 'tn.esprit.spring',
-                        artifactId: 'Foyer',
-                        version: '0.0.1', 
+                        groupId: GROUP_ID,
+                        artifactId: ARTIFACT_ID,
+                        version: VERSION, 
                         artifacts: [
                             [
-                                artifactId: 'Foyer',
+                                artifactId: ARTIFACT_ID,
                                 classifier: '',
-                                file: 'target/Foyer-0.0.1.jar', 
+                                file: "target/${ARTIFACT_ID}-${VERSION}.jar",
                                 type: 'jar'
                             ]
                         ]
@@ -80,7 +96,6 @@ pipeline {
                 }
             }
         }
-
 
         stage('Docker Build and Push') {
             steps {
